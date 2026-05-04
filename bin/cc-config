@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# cc-config: Unified Claude Code configuration viewer
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+exec python3 -m cc_config "$@"
