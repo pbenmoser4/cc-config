@@ -106,6 +106,64 @@ cc-config --json | jq '.concepts.mcp'
 
 Each entry is color-tagged with its source level so you can immediately see where it's defined and what might be overriding what.
 
+## Removing configuration
+
+```
+cc-config rm <concept> <name> [OPTIONS]
+```
+
+Deep-cleans a configuration item by removing its definition **and** all related references across every config level. Always shows a plan and asks for confirmation before making changes.
+
+### Examples
+
+```bash
+# Remove an MCP server (also cleans up permissions, CLAUDE.md sections, hooks)
+cc-config rm mcp agentflow
+
+# Preview what would be removed without changing anything
+cc-config rm mcp agentflow --dry-run
+
+# Remove a custom command
+cc-config rm commands backlog
+
+# Remove a permission rule
+cc-config rm permissions WebSearch
+
+# Remove an installed plugin (also deletes cached files)
+cc-config rm plugins rust-analyzer-lsp@claude-plugins-official
+
+# Remove a hook event
+cc-config rm hooks PostToolUse
+
+# Remove an environment variable
+cc-config rm env MY_VAR
+
+# Skip confirmation
+cc-config rm mcp old-server -y
+```
+
+### Supported concepts
+
+`model`, `mcp`, `hooks`, `permissions`, `commands`, `skills`, `agents`, `rules`, `env`, `plugins`
+
+### Options
+
+```
+--dry-run    Show what would be removed without making changes
+-y, --yes    Skip confirmation prompt
+-p, --project DIR    Project directory (default: cwd)
+--no-color   Disable colors
+```
+
+### What deep clean finds
+
+When removing an MCP server, for example, `cc-config rm` finds and removes:
+- The server definition in `mcpServers` (from settings.json and .mcp.json at all levels)
+- Permission rules matching `mcp__<name>__*`
+- CLAUDE.md sections bounded by `<!-- name:start -->` / `<!-- name:end -->` markers
+- Hook events whose commands reference the server's binary
+- Entries in `allowedMcpServers` / `deniedMcpServers` lists
+
 ## How it works
 
 1. **Discovery** — Finds all config files at all levels for the given project
