@@ -86,18 +86,18 @@ cc-config --json | jq '.concepts.mcp'
 
 ── MCP Servers ───────────────────────────────────────────────
 
-  agent-track                                           ● user-global
-    command:  ~/.local/bin/agent-track
-    args:     ["mcp"]
+  postgres                                              ● project-shared
+    command:  npx
+    args:     ["-y", "@anthropic/mcp-postgres", "postgresql://localhost/mydb"]
 
-  agentflow                                             ● user-global
-    command:  ~/dev/agentflow/target/release/agentflow
-    env:      AGENTFLOW_DB=~/.agentflow/agentflow.db
+  github                                                ● user-global
+    command:  ~/bin/github-mcp-server
+    env:      GITHUB_TOKEN=ghp_***
 
 ── Permissions ───────────────────────────────────────────────
 
   allow
-    mcp__agentflow__*                                   ● user-global
+    mcp__github__*                                      ● user-global
     WebSearch                                           ● project-local
 
   deny
@@ -118,10 +118,10 @@ Deep-cleans a configuration item by removing its definition **and** all related 
 
 ```bash
 # Remove an MCP server (also cleans up permissions, CLAUDE.md sections, hooks)
-cc-config rm mcp agentflow
+cc-config rm mcp github
 
 # Preview what would be removed without changing anything
-cc-config rm mcp agentflow --dry-run
+cc-config rm mcp github --dry-run
 
 # Remove a custom command
 cc-config rm commands backlog
@@ -155,28 +155,28 @@ cc-config rm mcp old-server -y
 --no-color   Disable colors
 ```
 
+> **Non-TTY environments:** When stdin is not a TTY (e.g., running from Claude Code's Bash tool or a script), the confirmation prompt is skipped automatically — equivalent to `--yes`.
+
 ### Sample removal plan
 
 ```
-$ cc-config rm mcp agentflow --dry-run
+$ cc-config rm mcp github --dry-run
 
-  cc-config rm mcp agentflow
+  cc-config rm mcp github
 
   Primary:
-    ✕ Remove 'agentflow' from mcpServers  ● user-global
+    ✕ Remove 'github' from mcpServers  ● user-global
       ~/.claude/settings.json
 
   Related references:
-    ~ Remove 1 permission rule(s) matching mcp__agentflow__*  ● user-global
+    ~ Remove 1 permission rule(s) matching mcp__github__*  ● user-global
       ~/.claude/settings.json
-    ~ Remove 'agentflow' section from CLAUDE.md (marker-bounded)  ● user-global
+    ~ Remove 'github' section from CLAUDE.md (marker-bounded)  ● user-global
       ~/.claude/CLAUDE.md
-    ~ Remove hook 'PostToolUse' (references agentflow binary)  ● user-global
-      ~/.claude/settings.json
-    ~ Remove hook 'Stop' (references agentflow binary)  ● user-global
+    ~ Remove hook 'PostToolUse' (references github binary)  ● user-global
       ~/.claude/settings.json
 
-  5 action(s): 1 primary, 4 related reference(s)
+  4 action(s): 1 primary, 3 related reference(s)
 
   --dry-run: no changes made.
 ```
