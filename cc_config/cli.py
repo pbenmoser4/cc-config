@@ -109,8 +109,8 @@ def _rm_main(argv: list[str]) -> int:
         print()
         return 0
 
-    # Confirm
-    if not args.yes:
+    # Confirm (skip if stdin is not a TTY — caller already approved execution)
+    if not args.yes and sys.stdin.isatty():
         try:
             response = input(c(Color.WARN, "  Proceed? [y/N] ")).strip().lower()
         except (EOFError, KeyboardInterrupt):
