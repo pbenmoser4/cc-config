@@ -155,6 +155,32 @@ cc-config rm mcp old-server -y
 --no-color   Disable colors
 ```
 
+### Sample removal plan
+
+```
+$ cc-config rm mcp agentflow --dry-run
+
+  cc-config rm mcp agentflow
+
+  Primary:
+    ✕ Remove 'agentflow' from mcpServers  ● user-global
+      ~/.claude/settings.json
+
+  Related references:
+    ~ Remove 1 permission rule(s) matching mcp__agentflow__*  ● user-global
+      ~/.claude/settings.json
+    ~ Remove 'agentflow' section from CLAUDE.md (marker-bounded)  ● user-global
+      ~/.claude/CLAUDE.md
+    ~ Remove hook 'PostToolUse' (references agentflow binary)  ● user-global
+      ~/.claude/settings.json
+    ~ Remove hook 'Stop' (references agentflow binary)  ● user-global
+      ~/.claude/settings.json
+
+  5 action(s): 1 primary, 4 related reference(s)
+
+  --dry-run: no changes made.
+```
+
 ### What deep clean finds
 
 When removing an MCP server, for example, `cc-config rm` finds and removes:
